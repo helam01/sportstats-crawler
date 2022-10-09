@@ -88,7 +88,7 @@ def exportResult(result):
     print(path+'/excel.xlsx')
 
 
-def readPageTable(lines, iteration):
+def readPageTable(lines):
     table = driver.find_element(
         By.CSS_SELECTOR, 'table.results.overview-result')
 
@@ -101,7 +101,7 @@ def readPageTable(lines, iteration):
 
     print('Finish read table ', pagination['current_page'])
 
-    if (pagination['current_page'] < 2):
+    if (pagination['current_page'] < pagination['total_page']):
         WebDriverWait(driver, 60).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'ul.pagination.pagination-sm li')))
 
@@ -122,8 +122,7 @@ def readPageTable(lines, iteration):
             current_page = pagination_check['current_page']
 
         print('time to read next table')
-        iteration = iteration+1
-        return readPageTable(lines, iteration)
+        return readPageTable(lines)
     else:
         return lines
 
@@ -134,7 +133,7 @@ url = 'https://www.sportstats.ca/display-results.xhtml?raceid=114430'
 driver.get(url)
 print('Opened URL: ', url)
 
-result = readPageTable([], 1)
+result = readPageTable([])
 print('Lines registered: ', len(result))
 exportResult(result)
 
